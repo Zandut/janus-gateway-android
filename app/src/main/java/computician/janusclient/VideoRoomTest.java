@@ -37,15 +37,16 @@ public class VideoRoomTest {
     public static final String REQUEST = "request";
     public static final String MESSAGE = "message";
     public static final String PUBLISHERS = "publishers";
-    private final String JANUS_URI = "ws://192.168.1.197:8188";
+    private final String JANUS_URI = "https://c1.classmiles.com/janus";
     private JanusPluginHandle handle = null;
     private VideoRenderer.Callbacks localRender;
     private Deque<VideoRenderer.Callbacks> availableRemoteRenderers = new ArrayDeque<>();
     private HashMap<BigInteger, VideoRenderer.Callbacks> remoteRenderers = new HashMap<>();
     private JanusServer janusServer;
     private BigInteger myid;
-    final private String user_name = "android";
-    final private int roomid = 1234;
+    final private String user_name = "ZANDUT";
+    final private int roomid = 78767227;
+    private final String token = "c4b5e97a5b0d7802246cf6d1f78694122425fab7";
 
     public VideoRoomTest(VideoRenderer.Callbacks localRender, VideoRenderer.Callbacks[] remoteRenders) {
         this.localRender = localRender;
@@ -53,7 +54,7 @@ public class VideoRoomTest {
         {
             this.availableRemoteRenderers.push(remoteRenders[i]);
         }
-        janusServer = new JanusServer(new JanusGlobalCallbacks());
+        janusServer = new JanusServer(new JanusGlobalCallbacks(), token);
     }
 
     class ListenerAttachCallbacks implements IJanusPluginCallbacks{
@@ -76,6 +77,7 @@ public class VideoRoomTest {
                 body.put("room", roomid);
                 body.put("ptype", "listener");
                 body.put("feed", feedid);
+                body.put("token", token);
                 msg.put(MESSAGE, body);
                 handle.sendMessage(new PluginHandleSendMessageCallbacks(msg));
             }
@@ -102,6 +104,7 @@ public class VideoRoomTest {
                                 body.put("room", roomid);
                                 mymsg.put(MESSAGE, body);
                                 mymsg.put("jsep", obj);
+                                mymsg.put("token", token);
                                 listener_handle.sendMessage(new PluginHandleSendMessageCallbacks(mymsg));
                             } catch (Exception ex) {
 
@@ -239,6 +242,7 @@ public class VideoRoomTest {
                 {
                     obj.put(REQUEST, "join");
                     obj.put("room", roomid);
+                    obj.put("token", token);
                     obj.put("ptype", "publisher");
                     obj.put("display", user_name);
                     msg.put(MESSAGE, obj);

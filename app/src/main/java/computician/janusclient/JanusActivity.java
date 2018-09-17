@@ -20,7 +20,7 @@ public class JanusActivity extends Activity {
     private GLSurfaceView vsv;
     private VideoRenderer.Callbacks localRender;
     private VideoRenderer.Callbacks remoteRender;
-    private EchoTest echoTest;
+   // private EchoTest echoTest;
     private VideoRoomTest videoRoomTest;
 
     /**
@@ -54,9 +54,14 @@ public class JanusActivity extends Activity {
         private void init() {
             try {
                 EGLContext con = VideoRendererGui.getEGLContext();
-                echoTest = new EchoTest(localRender, remoteRender);
-                echoTest.initializeMediaContext(JanusActivity.this, true, true, true, con);
-                echoTest.Start();
+//                echoTest = new EchoTest(localRender, remoteRender);
+//                echoTest.initializeMediaContext(JanusActivity.this, true, true, true, con);
+//                echoTest.Start();
+                VideoRenderer.Callbacks[] videoRenderers = new VideoRenderer.Callbacks[1];
+                videoRenderers[0] = remoteRender;
+                VideoRoomTest videoRoomTest = new VideoRoomTest(localRender, videoRenderers);
+                videoRoomTest.initializeMediaContext(JanusActivity.this, true, true, true, con);
+                videoRoomTest.Start();
 
             } catch (Exception ex) {
                 Log.e("computician.janusclient", ex.getMessage());
@@ -71,6 +76,7 @@ public class JanusActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_janus);
+
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 

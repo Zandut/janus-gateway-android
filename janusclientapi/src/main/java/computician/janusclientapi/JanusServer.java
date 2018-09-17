@@ -61,6 +61,7 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
                 ITransactionCallbacks tcb = JanusTransactionCallbackFactory.createNewTransactionCallback(JanusServer.this, TransactionType.attach, cb.getPlugin(), cb);
                 String transaction = putNewTransaction(tcb);
                 obj.put("transaction", transaction);
+                obj.put("token", token);
                 serverConnection.sendMessage(obj.toString(), sessionId);
             } catch (JSONException ex) {
                 onCallbackError(ex.getMessage());
@@ -68,8 +69,8 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
             return null;
         };
     }
-
-    public JanusServer(IJanusGatewayCallbacks gatewayCallbacks) {
+private String token;
+    public JanusServer(IJanusGatewayCallbacks gatewayCallbacks, String token) {
         gatewayObserver = gatewayCallbacks;
         java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
         java.lang.System.setProperty("java.net.preferIPv4Stack", "true");
@@ -80,6 +81,7 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
         connected = false;
         sessionId = new BigInteger("-1");
         serverConnection = JanusMessagerFactory.createMessager(serverUri, this);
+        this.token = token;
     }
 
     private String putNewTransaction(ITransactionCallbacks transactionCallbacks) {
@@ -99,6 +101,7 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
             ITransactionCallbacks cb = JanusTransactionCallbackFactory.createNewTransactionCallback(this, TransactionType.create);
             String transaction = putNewTransaction(cb);
             obj.put("transaction", transaction);
+            obj.put("token", this.token);
             serverConnection.sendMessage(obj.toString());
         } catch (JSONException ex) {
             onCallbackError(ex.getMessage());
@@ -127,6 +130,7 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
                 if (serverConnection.getMessengerType() == JanusMessengerType.websocket)
                     obj.put("session_id", sessionId);
                 obj.put("transaction", stringGenerator.randomString(12));
+                obj.put("token", token);
                 serverConnection.sendMessage(obj.toString(), sessionId);
             } catch (JSONException ex) {
                 gatewayObserver.onCallbackError("Keep alive failed is Janus online?" + ex.getMessage());
@@ -193,6 +197,7 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
                 msg.put("handle_id", handle);
             }
             msg.put("transaction", stringGenerator.randomString(12));
+            msg.put("token", token);
             if (connected)
                 serverConnection.sendMessage(msg.toString(), sessionId, handle);
             if (type == JanusMessageType.detach) {
@@ -222,6 +227,7 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
                 ITransactionCallbacks cb = JanusTransactionCallbackFactory.createNewTransactionCallback(this, TransactionType.plugin_handle_message, plugin, callbacks);
                 String transaction = putNewTransaction(cb);
                 newMessage.put("transaction", transaction);
+                newMessage.put("token", token);
                 if (msg.has("message"))
                     newMessage.put("body", msg.getJSONObject("message"));
                 if (msg.has("jsep"))
@@ -244,6 +250,7 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
             ITransactionCallbacks cb = JanusTransactionCallbackFactory.createNewTransactionCallback(this, TransactionType.plugin_handle_webrtc_message, plugin, callbacks);
             String transaction = putNewTransaction(cb);
             msg.put("transaction", transaction);
+            msg.put("token", token);
             if (callbacks.getJsep() != null) {
                 msg.put("jsep", callbacks.getJsep());
             }
