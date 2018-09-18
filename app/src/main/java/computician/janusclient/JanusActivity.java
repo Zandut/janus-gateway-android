@@ -44,6 +44,7 @@ public class JanusActivity extends Activity {
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
+//    private VideoRoomTest videoRoomTest;
 
     private class MyInit implements Runnable {
 
@@ -59,7 +60,7 @@ public class JanusActivity extends Activity {
 //                echoTest.Start();
                 VideoRenderer.Callbacks[] videoRenderers = new VideoRenderer.Callbacks[1];
                 videoRenderers[0] = remoteRender;
-                VideoRoomTest videoRoomTest = new VideoRoomTest(localRender, videoRenderers);
+                videoRoomTest = new VideoRoomTest(localRender, videoRenderers);
                 videoRoomTest.initializeMediaContext(JanusActivity.this, true, true, true, con);
                 videoRoomTest.Start();
 
@@ -67,6 +68,14 @@ public class JanusActivity extends Activity {
                 Log.e("computician.janusclient", ex.getMessage());
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+    super.onBackPressed();
+        videoRoomTest.Disconnect();
+
+
     }
 
     @Override

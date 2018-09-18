@@ -8,6 +8,7 @@ import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +50,10 @@ public class JanusServer implements Runnable, IJanusMessageObserver, IJanusSessi
     private volatile Thread keep_alive;
     private Boolean peerConnectionFactoryInitialized = false;
 
+
+
+
+
     private class AsyncAttach extends AsyncTask<IJanusPluginCallbacks, Void ,Void>{
         protected Void doInBackground(IJanusPluginCallbacks... cbs){
             IJanusPluginCallbacks cb = cbs[0];
@@ -83,6 +88,8 @@ private String token;
         serverConnection = JanusMessagerFactory.createMessager(serverUri, this);
         this.token = token;
     }
+
+
 
     private String putNewTransaction(ITransactionCallbacks transactionCallbacks) {
         String transaction = stringGenerator.randomString(12);

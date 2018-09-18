@@ -37,7 +37,7 @@ public class VideoRoomTest {
     public static final String REQUEST = "request";
     public static final String MESSAGE = "message";
     public static final String PUBLISHERS = "publishers";
-    private final String JANUS_URI = "https://c1.classmiles.com/janus";
+    private final String JANUS_URI = "wss://c1.classmiles.com:8989/janus";
     private JanusPluginHandle handle = null;
     private VideoRenderer.Callbacks localRender;
     private Deque<VideoRenderer.Callbacks> availableRemoteRenderers = new ArrayDeque<>();
@@ -45,8 +45,8 @@ public class VideoRoomTest {
     private JanusServer janusServer;
     private BigInteger myid;
     final private String user_name = "ZANDUT";
-    final private int roomid = 78767227;
-    private final String token = "c4b5e97a5b0d7802246cf6d1f78694122425fab7";
+    final private int roomid = 78767242;
+    private final String token = "7ddc38dc4c73bd66737e00ad4f546b1e5c396188";
 
     public VideoRoomTest(VideoRenderer.Callbacks localRender, VideoRenderer.Callbacks[] remoteRenders) {
         this.localRender = localRender;
@@ -360,6 +360,11 @@ public class VideoRoomTest {
         }
     }
 
+    public void Disconnect()
+    {
+        janusServer.Destroy();
+    }
+
     public class JanusGlobalCallbacks implements IJanusGatewayCallbacks {
         public void onSuccess() {
             janusServer.Attach(new JanusPublisherPluginCallbacks());
@@ -376,7 +381,10 @@ public class VideoRoomTest {
 
         @Override
         public List<PeerConnection.IceServer> getIceServers() {
-            return new ArrayList<PeerConnection.IceServer>();
+            ArrayList<PeerConnection.IceServer> iceServers=new ArrayList<PeerConnection.IceServer>();
+            PeerConnection.IceServer iceserver = new PeerConnection.IceServer("stun:stun.l.google.com:19302");
+            iceServers.add(iceserver);
+            return iceServers;
         }
 
         @Override
